@@ -1,9 +1,9 @@
 #ifndef CONNECTION_CHTTP_SERVER_ANT_H
 #define CONNECTION_CHTTP_SERVER_ANT_H
-#include <linux/in.h>
+#include <netinet/in.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <sys/types.h>
+#include <sys/socket.h>
 
 #include "errors.h"
 

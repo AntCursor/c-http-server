@@ -9,17 +9,17 @@
 #include "connection.h"
 #include "vector.h"
 
-#define LOCAL_HOST 0x7f000001  // 127.0.0.1
+#define LOCAL_HOST 0x7f000001 // 127.0.0.1
 // #define LOCAL_HOST 0xc0a80108 // 192.168.1.8
-#define BACKLOG 20  // size of connection queue
+#define BACKLOG 20 // size of connection queue
 #define DEFAULT_PORT (uint16_t)8080
 #define MSG_BUFFER_SIZE 256
 
 #define MAX_SIZE_ADDR 15
 #define MAX_SIZE_PORT 5
-#define MAX_SIZE_ADDRPORT         \
-  MAX_SIZE_ADDR + MAX_SIZE_PORT + \
-      2  // Ex: "192.168.150.255:65535\0" -> 22 characters long.
+#define MAX_SIZE_ADDRPORT                                                      \
+  MAX_SIZE_ADDR + MAX_SIZE_PORT +                                              \
+      2 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
 
 int main(int argc, char **argv) {
   uint32_t addr = LOCAL_HOST;
