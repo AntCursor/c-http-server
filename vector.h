@@ -1,8 +1,6 @@
 #ifndef VECTOR_STRUCT_ANT_H
 #define VECTOR_STRUCT_ANT_H
 #include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
 
 typedef struct {
   char *data;

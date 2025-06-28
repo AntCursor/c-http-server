@@ -1,5 +1,6 @@
 #include "connection.h"
 #include "errors.h"
+#include <unistd.h>
 
 ErrCode createSocket(uint32_t addr, uint16_t port, SocketIPv4 *socket_s) {
   memset(socket_s, 0, sizeof(SocketIPv4));

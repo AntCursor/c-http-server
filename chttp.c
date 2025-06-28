@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
+#include <unistd.h>
 
 #define LOCAL_HOST 0x7f000001 // 127.0.0.1
 // #define LOCAL_HOST 0xc0a80108 // 192.168.1.8
