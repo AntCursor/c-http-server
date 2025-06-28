@@ -1,5 +1,6 @@
 #include "vector.h"
 #include <stdlib.h>
+#include <string.h>
 
 CharVec *vector_init(size_t initial_capacity) {
   CharVec *v = (CharVec *)malloc(sizeof(CharVec));

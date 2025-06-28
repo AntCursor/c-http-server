@@ -1,5 +1,6 @@
 #ifndef VECTOR_STRUCT_ANT_H
 #define VECTOR_STRUCT_ANT_H
+#include <stddef.h>
 #include <stdint.h>
 
 typedef struct {

@@ -1,5 +1,12 @@
 #include "connection.h"
 #include "errors.h"
+#include <bits/in_addr.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/endian.h>
+#include <sys/socket.h>
 #include <unistd.h>
 
 ErrCode createSocket(uint32_t addr, uint16_t port, SocketIPv4 *socket_s) {
