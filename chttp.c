@@ -15,11 +15,10 @@
 #define DEFAULT_PORT (uint16_t)8080
 #define MSG_BUFFER_SIZE 256
 
-#define MAX_SIZE_ADDR 15
+#define MIN_SIZE_ADDR 7
 #define MAX_SIZE_PORT 5
 #define MAX_SIZE_ADDRPORT                                                      \
-  MAX_SIZE_ADDR + MAX_SIZE_PORT +                                              \
-      2 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
+  22 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
 
 int main(int argc, char **argv) {
   uint32_t addr = LOCAL_HOST;
@@ -28,9 +27,16 @@ int main(int argc, char **argv) {
   if (argc == 2) {
     size_t argumentLenght = strlen(argv[1]);
     bool error = false;
+    bool pair = false;
 
-    // counting the ':'
-    if (argumentLenght > MAX_SIZE_ADDR + 1)
+    for (uint8_t i = MIN_SIZE_ADDR; i < argumentLenght; ++i) {
+      if (argv[1][i] == ':') {
+        pair = true;
+        break;
+      }
+    }
+
+    if (pair)
       error = strToAddrPort(argv[1], &addr, &port);
     else if (argumentLenght > MAX_SIZE_PORT)
       error = strToAddr(argv[1], &addr);
@@ -45,10 +51,9 @@ int main(int argc, char **argv) {
   }
 
   SocketIPv4 *listen_socket = malloc(sizeof(SocketIPv4));
-  initListenSocket(addr, port, BACKLOG, listen_socket);
-
-  if (!listen_socket) {
-    fprintf(stderr, "Error creating listening socket.");
+  if (initListenSocket(addr, port, BACKLOG, listen_socket) == EXIT_FAILURE ||
+      !listen_socket) {
+    fprintf(stderr, "Error creating listening socket.\n");
     return EXIT_FAILURE;
   }
 
