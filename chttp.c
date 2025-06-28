@@ -13,8 +13,12 @@
 #define BACKLOG 20 // size of connection queue
 #define DEFAULT_PORT (uint16_t)8080
 #define MSG_BUFFER_SIZE 256
-#define MAX_NUM_OF_CHAR_ADDRESS_AND_PORT_PAIR                                  \
-  22 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
+
+#define MAX_SIZE_ADDR 15
+#define MAX_SIZE_PORT 5
+#define MAX_SIZE_ADDRPORT                                                      \
+  MAX_SIZE_ADDR + MAX_SIZE_PORT +                                              \
+      2 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
 
 int main(int argc, char **argv) {
   uint32_t addr = LOCAL_HOST;
@@ -24,10 +28,10 @@ int main(int argc, char **argv) {
     size_t argumentLenght = strlen(argv[1]);
     bool error = false;
 
-    // 16 = num of characters before the port number starts
-    if (argumentLenght > 16)
+    // counting the ':'
+    if (argumentLenght > MAX_SIZE_ADDR + 1)
       error = strToAddrPort(argv[1], &addr, &port);
-    else if (argumentLenght > 5)
+    else if (argumentLenght > MAX_SIZE_PORT)
       error = strToAddr(argv[1], &addr);
     else
       port = atoi(argv[1]);
@@ -55,9 +59,9 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  char addrPortString[MAX_NUM_OF_CHAR_ADDRESS_AND_PORT_PAIR];
+  char addrPortString[MAX_SIZE_ADDRPORT];
   addrPortToStr(connection->addr.sin_addr.s_addr, connection->addr.sin_port,
-                addrPortString, MAX_NUM_OF_CHAR_ADDRESS_AND_PORT_PAIR);
+                addrPortString, MAX_SIZE_ADDRPORT);
 
   printf("Accepted connection from: %s\n\n", addrPortString);
 
