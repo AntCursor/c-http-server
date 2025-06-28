@@ -1,10 +1,11 @@
 #ifndef CONNECTION_CHTTP_SERVER_ANT_H
 #define CONNECTION_CHTTP_SERVER_ANT_H
-#include "errors.h"
 #include <linux/in.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <sys/types.h>
+
+#include "errors.h"
 
 typedef struct {
   uint32_t fd;
@@ -19,4 +20,4 @@ ErrCode acceptConnection(const SocketIPv4 *listen_s, SocketIPv4 *connection_s);
 ErrCode initListenSocket(uint32_t addr, uint16_t port, size_t queue_size,
                          SocketIPv4 *socket);
 void destroySocket(SocketIPv4 *s);
-#endif // CONNECTION_CHTTP_SERVER_ANT_H
+#endif  // CONNECTION_CHTTP_SERVER_ANT_H

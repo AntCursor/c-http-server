@@ -2,7 +2,6 @@
 #define ERROR_CODES_ENUM_ANT_CHTTPSERVER_H
 
 #include <stdint.h>
-#include <stdlib.h>
 typedef uint32_t ErrCode;
 
-#endif // !ERROR_CODES_ENUM_ANT_CHTTPSERVER_H
+#endif  // !ERROR_CODES_ENUM_ANT_CHTTPSERVER_H

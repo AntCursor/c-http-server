@@ -1,5 +1,5 @@
 #include "connection.h"
-#include "errors.h"
+
 #include <bits/in_addr.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -9,15 +9,17 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include "errors.h"
+
 ErrCode createSocket(uint32_t addr, uint16_t port, SocketIPv4 *socket_s) {
   memset(socket_s, 0, sizeof(SocketIPv4));
   /* socket() creates an endpoint for communication and returns a file
        descriptor that refers to that endpoint. */
   socket_s->fd =
-      socket(AF_INET,     // domain: IPv4 internet protocols.
-             SOCK_STREAM, // type: Provides sequenced, reliable, two-way,
-                          // connection-based byte streams.
-             0 // protocol: TCP, the default for this type and domain.
+      socket(AF_INET,      // domain: IPv4 internet protocols.
+             SOCK_STREAM,  // type: Provides sequenced, reliable, two-way,
+                           // connection-based byte streams.
+             0  // protocol: TCP, the default for this type and domain.
       );
   if (socket_s->fd < 0) {
     return EXIT_FAILURE;
@@ -41,8 +43,8 @@ ErrCode createSocket(uint32_t addr, uint16_t port, SocketIPv4 *socket_s) {
   };
   */
   struct in_addr s_addr;
-  s_addr.s_addr = htonl(addr); // htonl() converts from host byte order to
-                               // network byte order(big endian)
+  s_addr.s_addr = htonl(addr);  // htonl() converts from host byte order to
+                                // network byte order(big endian)
 
   socket_s->addr.sin_family = AF_INET;
   socket_s->addr.sin_port = htons(port);
@@ -89,13 +91,9 @@ ErrCode acceptConnection(const SocketIPv4 *listen_s, SocketIPv4 *connection_s) {
 }
 ErrCode initListenSocket(uint32_t addr, uint16_t port, size_t queue_size,
                          SocketIPv4 *socket) {
-
-  if (createSocket(addr, port, socket) == EXIT_FAILURE)
-    return EXIT_FAILURE;
-  if (bindSocket(socket) == EXIT_FAILURE)
-    return EXIT_FAILURE;
-  if (listenSocket(socket, queue_size) == EXIT_FAILURE)
-    return EXIT_FAILURE;
+  if (createSocket(addr, port, socket) == EXIT_FAILURE) return EXIT_FAILURE;
+  if (bindSocket(socket) == EXIT_FAILURE) return EXIT_FAILURE;
+  if (listenSocket(socket, queue_size) == EXIT_FAILURE) return EXIT_FAILURE;
 
   return EXIT_SUCCESS;
 }

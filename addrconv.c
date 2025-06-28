@@ -1,9 +1,11 @@
 #include "addrconv.h"
-#include "errors.h"
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/endian.h>
+
+#include "errors.h"
 
 void addrPortToStr(uint32_t addr, uint16_t port, char buff[],
                    size_t buff_size) {
@@ -21,8 +23,7 @@ ErrCode strToAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
 
   uint8_t nValues = sscanf(buff, "%hhd.%hhd.%hhd.%hhd:%hd", address,
                            address + 1, address + 2, address + 3, port);
-  if (nValues != 5)
-    return EXIT_FAILURE;
+  if (nValues != 5) return EXIT_FAILURE;
 
   addrN |= address[0] << 24;
   addrN |= address[1] << 16;
@@ -39,8 +40,7 @@ ErrCode strToAddr(const char buff[], uint32_t *addr) {
 
   uint8_t nValues = sscanf(buff, "%hhd.%hhd.%hhd.%hhd", address, address + 1,
                            address + 2, address + 3);
-  if (nValues != 4)
-    return EXIT_FAILURE;
+  if (nValues != 4) return EXIT_FAILURE;
 
   addrN |= address[0] << 24;
   addrN |= address[1] << 16;
