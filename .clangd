@@ -1,0 +1,118 @@
+# ------------------------------
+# .clangd configuration file (complete reference)
+# ------------------------------
+
+# ==============================
+# Compile flag settings
+# ==============================
+CompileFlags:
+  # Compiler flags to append to the compile command (string or [string]) — default: []
+  Add: [-xc, -Wall, -Wextra, -Wpedantic, -std=c23]
+  # Compiler flags to remove from the compile command (string or [string]) — default: []
+  Remove: []
+  # Where to search for compile_commands.json (Ancestors, Directory, None) — default: Ancestors
+  CompilationDatabase: Ancestors
+  # Name of the compiler to use (clang, gcc, clang++, clang-cl, etc.) — default: clang
+  Compiler: gcc
+  # Built-in headers behavior (Clangd, None) — default: Clangd
+  BuiltinHeaders: Clangd
+
+# ==============================
+# Indexing behavior
+# ==============================
+Index:
+  # Background indexing mode (Build, None) — default: Build
+  Background: Build
+  External:
+    # External index file path (string) — default: unset
+    File: ''
+    # Address of external index server (string) — default: unset
+    Server: ''
+    # Source-root for the external index (string) — default: unset
+    MountPoint: ''
+  # Index standard library symbols (Yes, No) — default: Yes
+  StandardLibrary: Yes
+
+# ==============================
+# Style preferences
+# ==============================
+Style:
+  # Fully qualify these namespaces (string or [string]) — default: []
+  FullyQualifiedNamespaces: []
+  # Headers to include with quotes (string or [string]) — default: []
+  QuotedHeaders: []
+  # Headers to include with angle brackets (string or [string]) — default: []
+  AngledHeaders: []
+
+# ==============================
+# Diagnostic and analysis behavior
+# ==============================
+Diagnostics:
+  # Suppress diagnostics (string or [string]) — default: []
+  Suppress: []
+  ClangTidy:
+    # Checks to enable (string or [string]) — default: []
+    Add: []
+    # Checks to disable (string or [string]) — default: []
+    Remove: []
+    # Options for clang-tidy checks (mapping: key: value) — default: {}
+    CheckOptions: {}
+    # Speed filter for clang-tidy (Strict, Loose, None) — default: Strict
+    FastCheckFilter: Strict
+  # Unused include warnings (None, Strict) — default: Strict
+  UnusedIncludes: Strict
+  Includes:
+    # Headers to ignore in unused-include checks (string or [string]) — default: []
+    IgnoreHeader: []
+    # Analyze angled includes (Yes, No) — default: Yes
+    AnalyzeAngledIncludes: Yes
+  # Warn for missing includes (None, Strict) — default: None
+  MissingIncludes: Strict
+
+# ==============================
+# Code completion options
+# ==============================
+Completion:
+  # Complete from all scopes (Yes, No) — default: Yes
+  AllScopes: Yes
+  # Function argument insertion (None, OpenDelimiter, Delimiters, FullPlaceholders) — default: FullPlaceholders
+  ArgumentLists: FullPlaceholders
+  # Header insertion policy (IWYU, Never) — default: IWYU
+  HeaderInsertion: Never
+  # Enable snippet completions (All, None) — default: All
+  CodePatterns: All
+
+# ==============================
+# Inlay hints
+# ==============================
+InlayHints:
+  # Enable inlay hints globally (Yes, No) — default: Yes
+  Enabled: Yes
+  # Show function parameter name hints (Yes, No) — default: Yes
+  ParameterNames: Yes
+  # Show deduced type hints (Yes, No) — default: Yes
+  DeducedTypes: Yes
+  # Show initializer designator hints (Yes, No) — default: Yes
+  Designators: Yes
+  # Show block-end hints (Yes, No) — default: No
+  BlockEnd: Yes
+  # Show hints for default arguments (Yes, No) — default: No
+  DefaultArguments: Yes
+  # Limit type name hint length (integer, 0 = unlimited) — default: 24
+  TypeNameLimit: 24
+
+# ==============================
+# Hover info
+# ==============================
+Hover:
+  # Show desugared 'aka' types (Yes, No) — default: No
+  ShowAKA: Yes
+
+# ==============================
+# Semantic tokens
+# ==============================
+SemanticTokens:
+  # Token kinds to disable (string or [string]) — default: []
+  DisabledKinds: []
+  # Token modifiers to disable (string or [string]) — default: []
+  DisabledModifiers: []
