@@ -29,7 +29,7 @@ ErrCode strToAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
   uint8_t address[IPV4_OCTET_COUNT];
   uint32_t addrN = 0;
 
-  uint8_t nValues = sscanf(buff, "%hhd.%hhd.%hhd.%hhd:%hd", address,
+  uint8_t nValues = sscanf(buff, "%hhu.%hhu.%hhu.%hhu:%hu", address,
                            address + 1, address + 2, address + 3, port);
   if (nValues != IPV4_ADDR_PARTS)
     return ERR_INVALID_ARGS;
@@ -47,7 +47,7 @@ ErrCode strToAddr(const char buff[], uint32_t *addr) {
   uint8_t address[IPV4_OCTET_COUNT];
   uint32_t addrN = 0;
 
-  uint8_t nValues = sscanf(buff, "%hhd.%hhd.%hhd.%hhd", address, address + 1,
+  uint8_t nValues = sscanf(buff, "%hhu.%hhu.%hhu.%hhu", address, address + 1,
                            address + 2, address + 3);
   if (nValues != IPV4_OCTET_COUNT)
     return ERR_INVALID_ARGS;
