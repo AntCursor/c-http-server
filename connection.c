@@ -90,11 +90,11 @@ ErrCode acceptConnection(const SocketIPv4 *listen_s, SocketIPv4 *connection_s) {
 }
 ErrCode initListenSocket(uint32_t addr, uint16_t port, size_t queue_size,
                          SocketIPv4 *socket) {
-  if (createSocket(addr, port, socket) == EXIT_FAILURE)
+  if (createSocket(addr, port, socket) != EXIT_SUCCESS)
     return EXIT_FAILURE;
-  if (bindSocket(socket) == EXIT_FAILURE)
+  if (bindSocket(socket) != EXIT_SUCCESS)
     return EXIT_FAILURE;
-  if (listenSocket(socket, queue_size) == EXIT_FAILURE)
+  if (listenSocket(socket, queue_size) != EXIT_SUCCESS)
     return EXIT_FAILURE;
 
   return EXIT_SUCCESS;

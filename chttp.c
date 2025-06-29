@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
   uint16_t port = DEFAULT_PORT;
 
   if (argc == 2) {
-    if (getAddrPort(argv[1], &addr, &port) == EXIT_FAILURE) {
+    if (getAddrPort(argv[1], &addr, &port) != EXIT_SUCCESS) {
       fprintf(stderr, "Warning: invalid address/port, using default values.\n");
       addr = LOCAL_HOST;
       port = DEFAULT_PORT;
@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
   }
 
   SocketIPv4 *listen_socket = malloc(sizeof(SocketIPv4));
-  if (initListenSocket(addr, port, BACKLOG, listen_socket) == EXIT_FAILURE ||
+  if (initListenSocket(addr, port, BACKLOG, listen_socket) != EXIT_SUCCESS ||
       !listen_socket) {
     fprintf(stderr, "Error creating listening socket.\n");
     return EXIT_FAILURE;
@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
   printf("Listening for connections.\n");
 
   SocketIPv4 *connection = malloc(sizeof(SocketIPv4));
-  if (acceptConnection(listen_socket, connection) == EXIT_FAILURE) {
+  if (acceptConnection(listen_socket, connection) != EXIT_SUCCESS) {
     fprintf(stderr, "Error accepting connection.");
     return EXIT_FAILURE;
   }
@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
   do {
     bytesRead = read(connection->fd, msgBuffer, MSG_BUFFER_SIZE);
     if (bytesRead > 0) {
-      if (vector_vpush(msgBuffer, bytesRead, message) == EXIT_FAILURE) {
+      if (vector_vpush(msgBuffer, bytesRead, message) != EXIT_SUCCESS) {
         fprintf(stderr, "Error expanding vector.");
         return EXIT_FAILURE;
       }
