@@ -8,7 +8,7 @@
 #include "errors.h"
 
 typedef struct {
-  uint32_t fd;
+  int fd;
   struct sockaddr_in addr;
   socklen_t addr_len;
 } SocketIPv4;
