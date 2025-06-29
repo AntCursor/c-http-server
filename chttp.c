@@ -36,31 +36,36 @@ int main(int argc, char **argv) {
   listen_socket = malloc(sizeof(SocketIPv4));
   if (!listen_socket) {
     fprintf(stderr, "Error allocating memory for socket.\n");
-    return EXIT_FAILURE;
+    exit_code = EXIT_FAILURE;
+    goto cleanup_and_exit;
   }
 
   connection = malloc(sizeof(SocketIPv4));
   if (!connection) {
     fprintf(stderr, "Error allocating memory for connection socket.\n");
-    return EXIT_FAILURE;
+    exit_code = EXIT_FAILURE;
+    goto cleanup_and_exit;
   }
 
   message = vector_init(MSG_BUFFER_SIZE);
   if (!message) {
     fprintf(stderr, "Error allocating memory for message buffer.\n");
-    return EXIT_FAILURE;
+    exit_code = EXIT_FAILURE;
+    goto cleanup_and_exit;
   }
 
   if (initListenSocket(addr, port, BACKLOG, listen_socket)) {
     fprintf(stderr, "Error creating listening socket.\n");
-    return EXIT_FAILURE;
+    exit_code = EXIT_FAILURE;
+    goto cleanup_and_exit;
   }
 
   printf("Listening for connections.\n");
 
   if (acceptConnection(listen_socket, connection)) {
     fprintf(stderr, "Error accepting connection.");
-    return EXIT_FAILURE;
+    exit_code = EXIT_FAILURE;
+    goto cleanup_and_exit;
   }
 
   printf("Accepted connection from: ");
@@ -76,18 +81,21 @@ int main(int argc, char **argv) {
     if (bytesRead > 0) {
       if (vector_vpush(msgBuffer, bytesRead, message)) {
         fprintf(stderr, "Error expanding vector.");
-        return EXIT_FAILURE;
+        exit_code = EXIT_FAILURE;
+        goto cleanup_and_exit;
       }
     }
   } while (bytesRead == MSG_BUFFER_SIZE);
 
   if (vector_push('\0', message)) {
     fprintf(stderr, "Error adding null terminator to message.\n");
-    return EXIT_FAILURE;
+    exit_code = EXIT_FAILURE;
+    goto cleanup_and_exit;
   }
 
   printf("%s", message->data);
 
+cleanup_and_exit:
   destroySocket(connection);
   vector_free(message);
   destroySocket(listen_socket);
