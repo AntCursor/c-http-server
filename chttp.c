@@ -81,9 +81,13 @@ int main(int argc, char **argv) {
   printf("%s", message->data);
 
 cleanup_and_exit:
-  destroySocket(connection);
+  closeSocket(connection);
+  free(connection);
+
+  closeSocket(listen_socket);
+  free(listen_socket);
+
   vector_free(message);
-  destroySocket(listen_socket);
 
   return exit_code;
 }

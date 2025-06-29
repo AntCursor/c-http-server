@@ -19,5 +19,5 @@ ErrCode listenSocket(const SocketIPv4 *socket_s, size_t queue_size);
 ErrCode acceptConnection(const SocketIPv4 *listen_s, SocketIPv4 *connection_s);
 ErrCode initListenSocket(uint32_t addr, uint16_t port, size_t queue_size,
                          SocketIPv4 *socket);
-void destroySocket(SocketIPv4 *s);
+void closeSocket(SocketIPv4 *s);
 #endif  // CONNECTION_CHTTP_SERVER_ANT_H
