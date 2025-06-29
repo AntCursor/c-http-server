@@ -10,6 +10,8 @@
 
 #define MIN_SIZE_ADDR 7
 #define MAX_SIZE_PORT 5
+#define MAX_SIZE_ADDRPORT                                                      \
+  22 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
 
 void addrPortToStr(uint32_t addr, uint16_t port, char buff[],
                    size_t buff_size) {
@@ -77,4 +79,10 @@ ErrCode getAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
   else
     *port = atoi(buff);
   return error ? EXIT_FAILURE : EXIT_SUCCESS;
+}
+
+void fprintAddrPort(FILE *fp, uint32_t addr, uint16_t port) {
+  char addrPortString[MAX_SIZE_ADDRPORT];
+  addrPortToStr(addr, port, addrPortString, MAX_SIZE_ADDRPORT);
+  fprintf(fp, "%s", addrPortString);
 }

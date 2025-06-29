@@ -15,9 +15,6 @@
 #define DEFAULT_PORT (uint16_t)8080
 #define MSG_BUFFER_SIZE 256
 
-#define MAX_SIZE_ADDRPORT                                                      \
-  22 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
-
 int main(int argc, char **argv) {
   uint32_t addr = LOCAL_HOST;
   uint16_t port = DEFAULT_PORT;
@@ -45,11 +42,10 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  char addrPortString[MAX_SIZE_ADDRPORT];
-  addrPortToStr(connection->addr.sin_addr.s_addr, connection->addr.sin_port,
-                addrPortString, MAX_SIZE_ADDRPORT);
-
-  printf("Accepted connection from: %s\n\n", addrPortString);
+  printf("Accepted connection from: ");
+  fprintAddrPort(stdout, connection->addr.sin_addr.s_addr,
+                 connection->addr.sin_port);
+  putchar('\n');
 
   char msgBuffer[MSG_BUFFER_SIZE];
   size_t bytesRead;
