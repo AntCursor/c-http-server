@@ -48,6 +48,8 @@ VecErr vector_push(char item, CharVec *v) {
 }
 
 char vector_pop(CharVec *v) {
+  if (v->size == 0)
+    return '\0';
   char item = v->data[v->size - 1];
   --v->size;
   return item;
