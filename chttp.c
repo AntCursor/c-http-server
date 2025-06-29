@@ -16,6 +16,12 @@
 #define MSG_BUFFER_SIZE 256
 
 int exit_code = EXIT_SUCCESS;
+#define CHECK_ERROR(condition, msg, cleanup_label)                             \
+  if (condition) {                                                             \
+    fprintf(stderr, "Error: %s\n", msg);                                       \
+    exit_code = EXIT_FAILURE;                                                  \
+    goto cleanup_label;                                                        \
+  }
 
 int main(int argc, char **argv) {
   uint32_t addr = LOCAL_HOST;
@@ -34,39 +40,24 @@ int main(int argc, char **argv) {
   CharVec *message = NULL;
 
   listen_socket = malloc(sizeof(SocketIPv4));
-  if (!listen_socket) {
-    fprintf(stderr, "Error allocating memory for socket.\n");
-    exit_code = EXIT_FAILURE;
-    goto cleanup_and_exit;
-  }
+  CHECK_ERROR(!listen_socket, "Error allocating memory for listen socket.",
+              cleanup_and_exit);
 
   connection = malloc(sizeof(SocketIPv4));
-  if (!connection) {
-    fprintf(stderr, "Error allocating memory for connection socket.\n");
-    exit_code = EXIT_FAILURE;
-    goto cleanup_and_exit;
-  }
+  CHECK_ERROR(!connection, "Error allocating memory for connection socket.",
+              cleanup_and_exit);
 
   message = vector_init(MSG_BUFFER_SIZE);
-  if (!message) {
-    fprintf(stderr, "Error allocating memory for message buffer.\n");
-    exit_code = EXIT_FAILURE;
-    goto cleanup_and_exit;
-  }
+  CHECK_ERROR(!message, "Error allocating memory for message buffer.",
+              cleanup_and_exit);
 
-  if (initListenSocket(addr, port, BACKLOG, listen_socket)) {
-    fprintf(stderr, "Error creating listening socket.\n");
-    exit_code = EXIT_FAILURE;
-    goto cleanup_and_exit;
-  }
+  CHECK_ERROR(initListenSocket(addr, port, BACKLOG, listen_socket),
+              "Error initializing listen socket.", cleanup_and_exit);
 
   printf("Listening for connections.\n");
 
-  if (acceptConnection(listen_socket, connection)) {
-    fprintf(stderr, "Error accepting connection.");
-    exit_code = EXIT_FAILURE;
-    goto cleanup_and_exit;
-  }
+  CHECK_ERROR(acceptConnection(listen_socket, connection),
+              "Error accepting connection.", cleanup_and_exit);
 
   printf("Accepted connection from: ");
   fprintAddrPort(stdout, connection->addr.sin_addr.s_addr,
@@ -79,19 +70,13 @@ int main(int argc, char **argv) {
   do {
     bytesRead = read(connection->fd, msgBuffer, MSG_BUFFER_SIZE);
     if (bytesRead > 0) {
-      if (vector_vpush(msgBuffer, bytesRead, message)) {
-        fprintf(stderr, "Error expanding vector.");
-        exit_code = EXIT_FAILURE;
-        goto cleanup_and_exit;
-      }
+      CHECK_ERROR(vector_vpush(msgBuffer, bytesRead, message),
+                  "Error expanding vector.", cleanup_and_exit);
     }
   } while (bytesRead == MSG_BUFFER_SIZE);
 
-  if (vector_push('\0', message)) {
-    fprintf(stderr, "Error adding null terminator to message.\n");
-    exit_code = EXIT_FAILURE;
-    goto cleanup_and_exit;
-  }
+  CHECK_ERROR(vector_push('\0', message),
+              "Error adding null terminator to message.", cleanup_and_exit);
 
   printf("%s", message->data);
 

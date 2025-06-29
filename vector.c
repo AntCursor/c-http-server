@@ -21,9 +21,11 @@ CharVec *vector_init(size_t initial_capacity) {
 }
 
 void vector_free(CharVec *v) {
-  free(v->data);
-  free(v);
-  v = NULL;
+  if (v) {
+    free(v->data);
+    free(v);
+    v = NULL;
+  }
 }
 
 VecErr vector_resize(size_t new_capacity, CharVec *v) {

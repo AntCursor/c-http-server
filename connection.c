@@ -101,6 +101,9 @@ ErrCode initListenSocket(uint32_t addr, uint16_t port, size_t queue_size,
 }
 
 void destroySocket(SocketIPv4 *s) {
-  close(s->fd);
-  free(s);
+  if (s) {
+    close(s->fd);
+    free(s);
+    s = NULL;
+  }
 }
