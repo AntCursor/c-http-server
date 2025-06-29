@@ -29,19 +29,23 @@ int main(int argc, char **argv) {
     }
   }
 
-  SocketIPv4 *listen_socket = malloc(sizeof(SocketIPv4));
+  SocketIPv4 *listen_socket = NULL;
+  SocketIPv4 *connection = NULL;
+  CharVec *message = NULL;
+
+  listen_socket = malloc(sizeof(SocketIPv4));
   if (!listen_socket) {
     fprintf(stderr, "Error allocating memory for socket.\n");
     return EXIT_FAILURE;
   }
 
-  SocketIPv4 *connection = malloc(sizeof(SocketIPv4));
+  connection = malloc(sizeof(SocketIPv4));
   if (!connection) {
     fprintf(stderr, "Error allocating memory for connection socket.\n");
     return EXIT_FAILURE;
   }
 
-  CharVec *message = vector_init(MSG_BUFFER_SIZE);
+  message = vector_init(MSG_BUFFER_SIZE);
   if (!message) {
     fprintf(stderr, "Error allocating memory for message buffer.\n");
     return EXIT_FAILURE;
