@@ -39,7 +39,7 @@ VecErr vector_resize(size_t new_capacity, CharVec *v) {
 
 VecErr vector_push(char item, CharVec *v) {
   if (v->size == v->capacity) {
-    if (vector_resize(2 * v->capacity, v))
+    if (vector_resize(v->capacity << 1, v))
       return EMEMORY_ALLOC;
   }
   v->data[v->size] = item;
@@ -58,9 +58,9 @@ char vector_pop(CharVec *v) {
 VecErr vector_vpush(const char arr[], size_t n, CharVec *v) {
   if ((v->capacity - v->size) < n) {
     // Increase capacity to the next power of 2
-    size_t new_capacity = 2 * v->capacity;
+    size_t new_capacity = v->capacity << 1;
     for (; new_capacity < v->size + n;) {
-      new_capacity *= 2;
+      new_capacity <<= 1;
     }
     if (vector_resize(new_capacity, v))
       return EMEMORY_ALLOC;
