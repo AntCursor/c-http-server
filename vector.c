@@ -5,12 +5,15 @@
 
 CharVec *vector_init(size_t initial_capacity) {
   CharVec *v = (CharVec *)malloc(sizeof(CharVec));
-  if (v == NULL) return NULL;
+  if (v == NULL)
+    return NULL;
+
   v->data = (char *)malloc(sizeof(char) * initial_capacity);
   if (v->data == NULL) {
     free(v);
     return NULL;
   };
+
   v->size = 0;
   v->capacity = initial_capacity;
 
@@ -25,17 +28,21 @@ void vector_free(CharVec *v) {
 
 VecErr vector_resize(size_t new_capacity, CharVec *v) {
   v->data = (char *)realloc(v->data, new_capacity);
+  if (!v->data) {
+    return EMEMORY_ALLOC;
+  }
   v->capacity = new_capacity;
-  return EXIT_SUCCESS;
+  return ESUCCESS;
 }
 
 VecErr vector_push(char item, CharVec *v) {
   if (v->size == v->capacity) {
-    if (vector_resize(2 * v->capacity, v) != EXIT_SUCCESS) return EXIT_FAILURE;
+    if (vector_resize(2 * v->capacity, v))
+      return EMEMORY_ALLOC;
   }
   v->data[v->size] = item;
   ++v->size;
-  return EXIT_SUCCESS;
+  return ESUCCESS;
 }
 
 char vector_pop(CharVec *v) {
@@ -51,11 +58,12 @@ VecErr vector_vpush(const char arr[], size_t n, CharVec *v) {
     for (; new_capacity < v->size + n;) {
       new_capacity *= 2;
     }
-    if (vector_resize(new_capacity, v) != EXIT_SUCCESS) return EXIT_FAILURE;
+    if (vector_resize(new_capacity, v))
+      return EMEMORY_ALLOC;
   }
 
   memcpy(v->data + v->size, arr, n);
   v->size += n;
 
-  return EXIT_SUCCESS;
+  return ESUCCESS;
 }

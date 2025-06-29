@@ -9,7 +9,10 @@ typedef struct {
   size_t capacity;
 } CharVec;
 
-typedef uint32_t VecErr;
+typedef enum {
+  ESUCCESS = 0,
+  EMEMORY_ALLOC,
+} VecErr;
 
 CharVec *vector_init(size_t initial_capacity);
 void vector_free(CharVec *v);

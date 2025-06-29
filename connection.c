@@ -21,7 +21,7 @@ ErrCode createSocket(uint32_t addr, uint16_t port, SocketIPv4 *socket_s) {
              0 // protocol: TCP, the default for this type and domain.
       );
   if (socket_s->fd < 0) {
-    return EXIT_FAILURE;
+    return ERR_CREATE_SOCK;
   }
 
   /*
@@ -49,16 +49,16 @@ ErrCode createSocket(uint32_t addr, uint16_t port, SocketIPv4 *socket_s) {
   socket_s->addr.sin_port = htons(port);
   socket_s->addr.sin_addr = s_addr;
   socket_s->addr_len = sizeof(socket_s->addr);
-  return EXIT_SUCCESS;
+  return ERR_SUCCESS;
 }
 ErrCode bindSocket(const SocketIPv4 *socket_s) {
   // int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
   // binds a socket created with socket() to an address/port pair.
   if (bind(socket_s->fd, (struct sockaddr *)&socket_s->addr,
            socket_s->addr_len) < 0) {
-    return EXIT_FAILURE;
+    return ERR_BIND_SOCK;
   }
-  return EXIT_SUCCESS;
+  return ERR_SUCCESS;
 }
 ErrCode listenSocket(const SocketIPv4 *socket_s, size_t queue_size) {
   // int listen(int sockfd, int backlog);
@@ -66,9 +66,9 @@ ErrCode listenSocket(const SocketIPv4 *socket_s, size_t queue_size) {
        that is, as a socket that will be used to accept incoming connection
        requests using accept(2).*/
   if (listen(socket_s->fd, queue_size) < 0) {
-    return EXIT_FAILURE;
+    return ERR_MARK_LISTEN;
   }
-  return EXIT_SUCCESS;
+  return ERR_SUCCESS;
 }
 ErrCode acceptConnection(const SocketIPv4 *listen_s, SocketIPv4 *connection_s) {
   memset(connection_s, 0, sizeof(SocketIPv4));
@@ -84,20 +84,20 @@ ErrCode acceptConnection(const SocketIPv4 *listen_s, SocketIPv4 *connection_s) {
       accept(listen_s->fd, (struct sockaddr *)&connection_s->addr,
              &connection_s->addr_len);
   if (connection_s->fd < 0) {
-    return EXIT_FAILURE;
+    return ERR_ACPT_CON;
   }
-  return EXIT_SUCCESS;
+  return ERR_SUCCESS;
 }
 ErrCode initListenSocket(uint32_t addr, uint16_t port, size_t queue_size,
                          SocketIPv4 *socket) {
-  if (createSocket(addr, port, socket) != EXIT_SUCCESS)
-    return EXIT_FAILURE;
-  if (bindSocket(socket) != EXIT_SUCCESS)
-    return EXIT_FAILURE;
-  if (listenSocket(socket, queue_size) != EXIT_SUCCESS)
-    return EXIT_FAILURE;
+  if (createSocket(addr, port, socket) != ERR_SUCCESS)
+    return ERR_CREATE_SOCK;
+  if (bindSocket(socket) != ERR_SUCCESS)
+    return ERR_BIND_SOCK;
+  if (listenSocket(socket, queue_size) != ERR_SUCCESS)
+    return ERR_MARK_LISTEN;
 
-  return EXIT_SUCCESS;
+  return ERR_SUCCESS;
 }
 
 void destroySocket(SocketIPv4 *s) {

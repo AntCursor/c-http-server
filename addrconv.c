@@ -32,7 +32,7 @@ ErrCode strToAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
   uint8_t nValues = sscanf(buff, "%hhd.%hhd.%hhd.%hhd:%hd", address,
                            address + 1, address + 2, address + 3, port);
   if (nValues != IPV4_ADDR_PARTS)
-    return EXIT_FAILURE;
+    return ERR_INVALID_ARGS;
 
   addrN |= address[0] << 24;
   addrN |= address[1] << 16;
@@ -41,7 +41,7 @@ ErrCode strToAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
 
   *addr = addrN;
 
-  return EXIT_SUCCESS;
+  return ERR_SUCCESS;
 }
 ErrCode strToAddr(const char buff[], uint32_t *addr) {
   uint8_t address[IPV4_OCTET_COUNT];
@@ -50,7 +50,7 @@ ErrCode strToAddr(const char buff[], uint32_t *addr) {
   uint8_t nValues = sscanf(buff, "%hhd.%hhd.%hhd.%hhd", address, address + 1,
                            address + 2, address + 3);
   if (nValues != IPV4_OCTET_COUNT)
-    return EXIT_FAILURE;
+    return ERR_INVALID_ARGS;
 
   addrN |= address[0] << 24;
   addrN |= address[1] << 16;
@@ -60,11 +60,11 @@ ErrCode strToAddr(const char buff[], uint32_t *addr) {
   // addrN doesn't need to be reversed as we shift it in reverse
   *addr = addrN;
 
-  return EXIT_SUCCESS;
+  return ERR_SUCCESS;
 }
 ErrCode getAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
   size_t argumentLenght = strlen(buff);
-  bool error = false;
+  ErrCode error = ERR_SUCCESS;
   bool pair = false;
 
   for (uint8_t i = MIN_IPV4_ADDR_LEN; i < argumentLenght; ++i) {
@@ -80,7 +80,7 @@ ErrCode getAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
     error = strToAddr(buff, addr);
   else
     *port = atoi(buff);
-  return error ? EXIT_FAILURE : EXIT_SUCCESS;
+  return error;
 }
 
 void fprintAddrPort(FILE *fp, uint32_t addr, uint16_t port) {

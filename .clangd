@@ -7,7 +7,7 @@
 # ==============================
 CompileFlags:
   # Compiler flags to append to the compile command (string or [string]) — default: []
-  Add: [-xc, -Wall, -Wextra, -Wpedantic, -std=c23]
+  Add: [-xc, -Wall, -Wextra, -Wpedantic, -Wno-empty-translation-unit, -std=c23]
   # Compiler flags to remove from the compile command (string or [string]) — default: []
   Remove: []
   # Where to search for compile_commands.json (Ancestors, Directory, None) — default: Ancestors
@@ -25,11 +25,11 @@ Index:
   Background: Build
   External:
     # External index file path (string) — default: unset
-    File: ''
+    File: ""
     # Address of external index server (string) — default: unset
-    Server: ''
+    Server: ""
     # Source-root for the external index (string) — default: unset
-    MountPoint: ''
+    MountPoint: ""
   # Index standard library symbols (Yes, No) — default: Yes
   StandardLibrary: Yes
 
