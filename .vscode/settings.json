@@ -4,5 +4,6 @@
   "editor.insertSpaces": false,
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
-  "cmake.useCMakePresets": "always"
+  "cmake.useCMakePresets": "always",
+	"C_Cpp.intelliSenseEngine": "default"
 }
