@@ -63,6 +63,9 @@ ErrCode strToAddr(const char buff[], uint32_t *addr) {
   return ERR_SUCCESS;
 }
 ErrCode getAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
+  if (!buff || !addr || !port)
+    return ERR_INVALID_ARGS;
+
   size_t argumentLenght = strlen(buff);
   ErrCode error = ERR_SUCCESS;
   bool pair = false;
