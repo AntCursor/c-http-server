@@ -28,8 +28,11 @@ int main(int argc, char **argv) {
   }
 
   SocketIPv4 *listen_socket = malloc(sizeof(SocketIPv4));
-  if (initListenSocket(addr, port, BACKLOG, listen_socket) != EXIT_SUCCESS ||
-      !listen_socket) {
+  if (!listen_socket) {
+    fprintf(stderr, "Error allocating memory for socket.\n");
+    return EXIT_FAILURE;
+  }
+  if (initListenSocket(addr, port, BACKLOG, listen_socket) != EXIT_SUCCESS) {
     fprintf(stderr, "Error creating listening socket.\n");
     return EXIT_FAILURE;
   }
@@ -60,6 +63,10 @@ int main(int argc, char **argv) {
       }
     }
   } while (bytesRead == MSG_BUFFER_SIZE);
+  if (vector_push('\0', message) != EXIT_SUCCESS) {
+    fprintf(stderr, "Error adding null terminator to message.\n");
+    return EXIT_FAILURE;
+  }
 
   printf("%s", message->data);
   destroySocket(connection);
