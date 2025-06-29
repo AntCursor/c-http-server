@@ -16,4 +16,4 @@ ErrCode getAddrPort(const char buff[], uint32_t *addr, uint16_t *port);
 
 void fprintAddrPort(FILE *fp, uint32_t addr, uint16_t port);
 
-#endif  // !ADDRCONV_CHTTPSERVER_ANT_H
+#endif // !ADDRCONV_CHTTPSERVER_ANT_H

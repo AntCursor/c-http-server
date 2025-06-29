@@ -11,8 +11,8 @@
 
 #define LOCAL_HOST 0x7f000001 // 127.0.0.1
 // #define LOCAL_HOST 0xc0a80108 // 192.168.1.8
-#define BACKLOG 20 // size of connection queue
-#define DEFAULT_PORT (uint16_t)8080
+#define BACKLOG         20 // size of connection queue
+#define DEFAULT_PORT    (uint16_t)8080
 #define MSG_BUFFER_SIZE 256
 
 int exit_code = EXIT_SUCCESS;
@@ -23,7 +23,9 @@ int exit_code = EXIT_SUCCESS;
     goto cleanup_label;                                                        \
   }
 
-int main(int argc, char **argv) {
+int
+main(int argc, char** argv)
+{
   uint32_t addr = LOCAL_HOST;
   uint16_t port = DEFAULT_PORT;
 
@@ -35,52 +37,69 @@ int main(int argc, char **argv) {
     }
   }
 
-  SocketIPv4 *listen_socket = NULL;
-  SocketIPv4 *connection = NULL;
-  CharVec *message = NULL;
+  SocketIPv4* listen_socket = NULL;
+  SocketIPv4* connection    = NULL;
+  CharVec*    message       = NULL;
 
   listen_socket = malloc(sizeof(SocketIPv4));
-  CHECK_ERROR(!listen_socket, "Error allocating memory for listen socket.",
-              cleanup_and_exit, exit_code, EXIT_FAILURE);
+  CHECK_ERROR(!listen_socket,
+              "Error allocating memory for listen socket.",
+              cleanup_and_exit,
+              exit_code,
+              EXIT_FAILURE);
 
   connection = malloc(sizeof(SocketIPv4));
-  CHECK_ERROR(!connection, "Error allocating memory for connection socket.",
-              cleanup_and_exit, exit_code, EXIT_FAILURE);
+  CHECK_ERROR(!connection,
+              "Error allocating memory for connection socket.",
+              cleanup_and_exit,
+              exit_code,
+              EXIT_FAILURE);
 
   message = vector_init(MSG_BUFFER_SIZE);
-  CHECK_ERROR(!message, "Error allocating memory for message buffer.",
-              cleanup_and_exit, exit_code, EXIT_FAILURE);
+  CHECK_ERROR(!message,
+              "Error allocating memory for message buffer.",
+              cleanup_and_exit,
+              exit_code,
+              EXIT_FAILURE);
 
   CHECK_ERROR(initListenSocket(addr, port, BACKLOG, listen_socket),
-              "Error initializing listen socket.", cleanup_and_exit, exit_code,
+              "Error initializing listen socket.",
+              cleanup_and_exit,
+              exit_code,
               EXIT_FAILURE);
 
   printf("Listening for connections.\n");
 
   CHECK_ERROR(acceptConnection(listen_socket, connection),
-              "Error accepting connection.", cleanup_and_exit, exit_code,
+              "Error accepting connection.",
+              cleanup_and_exit,
+              exit_code,
               EXIT_FAILURE);
 
   printf("Accepted connection from: ");
-  fprintAddrPort(stdout, connection->addr.sin_addr.s_addr,
-                 connection->addr.sin_port);
+  fprintAddrPort(
+    stdout, connection->addr.sin_addr.s_addr, connection->addr.sin_port);
   putchar('\n');
 
-  char msgBuffer[MSG_BUFFER_SIZE];
+  char   msgBuffer[MSG_BUFFER_SIZE];
   size_t bytesRead;
 
   do {
     bytesRead = read(connection->fd, msgBuffer, MSG_BUFFER_SIZE);
     if (bytesRead > 0) {
       CHECK_ERROR(vector_vpush(msgBuffer, bytesRead, message),
-                  "Error expanding vector.", cleanup_and_exit, exit_code,
+                  "Error expanding vector.",
+                  cleanup_and_exit,
+                  exit_code,
                   EXIT_FAILURE);
     }
   } while (bytesRead == MSG_BUFFER_SIZE);
 
   CHECK_ERROR(vector_push('\0', message),
-              "Error adding null terminator to message.", cleanup_and_exit,
-              exit_code, EXIT_FAILURE);
+              "Error adding null terminator to message.",
+              cleanup_and_exit,
+              exit_code,
+              EXIT_FAILURE);
 
   printf("%s", message->data);
 

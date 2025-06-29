@@ -8,31 +8,44 @@
 
 #include "errors.h"
 
-#define IPV4_OCTET_COUNT 4
-#define IPV4_ADDR_PARTS 5 // 4 octets + port
+#define IPV4_OCTET_COUNT  4
+#define IPV4_ADDR_PARTS   5 // 4 octets + port
 #define MIN_IPV4_ADDR_LEN 7
 #define MAX_IPV4_ADDR_LEN 15
-#define MAX_PORT_LEN 5
+#define MAX_PORT_LEN      5
 #define MAX_IPV4_ADDRPORT_STR_LEN                                              \
   MAX_IPV4_ADDR_LEN + MAX_PORT_LEN + 1 +                                       \
-      1 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
+    1 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
 
-void addrPortToStr(uint32_t addr, uint16_t port, char buff[],
-                   size_t buff_size) {
+void
+addrPortToStr(uint32_t addr, uint16_t port, char buff[], size_t buff_size)
+{
   addr = ntohl(addr);
   port = ntohs(port);
 
-  snprintf(buff, buff_size, "%d.%d.%d.%d:%d", (addr & 0xff000000) >> 24,
-           (addr & 0x00ff0000) >> 16, (addr & 0x0000ff00) >> 8,
-           (addr & 0x000000ff), port);
+  snprintf(buff,
+           buff_size,
+           "%d.%d.%d.%d:%d",
+           (addr & 0xff000000) >> 24,
+           (addr & 0x00ff0000) >> 16,
+           (addr & 0x0000ff00) >> 8,
+           (addr & 0x000000ff),
+           port);
 }
 
-ErrCode strToAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
-  uint8_t address[IPV4_OCTET_COUNT];
+ErrCode
+strToAddrPort(const char buff[], uint32_t* addr, uint16_t* port)
+{
+  uint8_t  address[IPV4_OCTET_COUNT];
   uint32_t addrN = 0;
 
-  uint8_t nValues = sscanf(buff, "%hhu.%hhu.%hhu.%hhu:%hu", address,
-                           address + 1, address + 2, address + 3, port);
+  uint8_t nValues = sscanf(buff,
+                           "%hhu.%hhu.%hhu.%hhu:%hu",
+                           address,
+                           address + 1,
+                           address + 2,
+                           address + 3,
+                           port);
   if (nValues != IPV4_ADDR_PARTS)
     return ERR_INVALID_ARGS;
 
@@ -45,12 +58,18 @@ ErrCode strToAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
 
   return ERR_SUCCESS;
 }
-ErrCode strToAddr(const char buff[], uint32_t *addr) {
-  uint8_t address[IPV4_OCTET_COUNT];
+ErrCode
+strToAddr(const char buff[], uint32_t* addr)
+{
+  uint8_t  address[IPV4_OCTET_COUNT];
   uint32_t addrN = 0;
 
-  uint8_t nValues = sscanf(buff, "%hhu.%hhu.%hhu.%hhu", address, address + 1,
-                           address + 2, address + 3);
+  uint8_t nValues = sscanf(buff,
+                           "%hhu.%hhu.%hhu.%hhu",
+                           address,
+                           address + 1,
+                           address + 2,
+                           address + 3);
   if (nValues != IPV4_OCTET_COUNT)
     return ERR_INVALID_ARGS;
 
@@ -64,16 +83,19 @@ ErrCode strToAddr(const char buff[], uint32_t *addr) {
 
   return ERR_SUCCESS;
 }
-ErrCode getAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
+ErrCode
+getAddrPort(const char buff[], uint32_t* addr, uint16_t* port)
+{
   if (!buff || !addr || !port)
     return ERR_INVALID_ARGS;
 
-  size_t argumentLenght = strlen(buff);
-  ErrCode error = ERR_SUCCESS;
-  bool pair = false;
+  size_t  argumentLenght = strlen(buff);
+  ErrCode error          = ERR_SUCCESS;
+  bool    pair           = false;
 
   for (uint8_t i = MIN_IPV4_ADDR_LEN;
-       i < argumentLenght && i < MAX_IPV4_ADDR_LEN + 1; ++i) {
+       i < argumentLenght && i < MAX_IPV4_ADDR_LEN + 1;
+       ++i) {
     if (buff[i] == ':') {
       pair = true;
       break;
@@ -89,7 +111,9 @@ ErrCode getAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
   return error;
 }
 
-void fprintAddrPort(FILE *fp, uint32_t addr, uint16_t port) {
+void
+fprintAddrPort(FILE* fp, uint32_t addr, uint16_t port)
+{
   char addrPortString[MAX_IPV4_ADDRPORT_STR_LEN];
   addrPortToStr(addr, port, addrPortString, MAX_IPV4_ADDRPORT_STR_LEN);
   fprintf(fp, "%s", addrPortString);

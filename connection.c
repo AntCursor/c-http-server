@@ -10,16 +10,18 @@
 
 #include "errors.h"
 
-ErrCode createSocket(uint32_t addr, uint16_t port, SocketIPv4 *socket_s) {
+ErrCode
+createSocket(uint32_t addr, uint16_t port, SocketIPv4* socket_s)
+{
   memset(socket_s, 0, sizeof(SocketIPv4));
   /* socket() creates an endpoint for communication and returns a file
        descriptor that refers to that endpoint. */
   socket_s->fd =
-      socket(AF_INET,     // domain: IPv4 internet protocols.
-             SOCK_STREAM, // type: Provides sequenced, reliable, two-way,
-                          // connection-based byte streams.
-             0 // protocol: TCP, the default for this type and domain.
-      );
+    socket(AF_INET,     // domain: IPv4 internet protocols.
+           SOCK_STREAM, // type: Provides sequenced, reliable, two-way,
+                        // connection-based byte streams.
+           0            // protocol: TCP, the default for this type and domain.
+    );
   if (socket_s->fd < 0) {
     return ERR_CREATE_SOCK;
   }
@@ -46,21 +48,26 @@ ErrCode createSocket(uint32_t addr, uint16_t port, SocketIPv4 *socket_s) {
                                // network byte order(big endian)
 
   socket_s->addr.sin_family = AF_INET;
-  socket_s->addr.sin_port = htons(port);
-  socket_s->addr.sin_addr = s_addr;
-  socket_s->addr_len = sizeof(socket_s->addr);
+  socket_s->addr.sin_port   = htons(port);
+  socket_s->addr.sin_addr   = s_addr;
+  socket_s->addr_len        = sizeof(socket_s->addr);
   return ERR_SUCCESS;
 }
-ErrCode bindSocket(const SocketIPv4 *socket_s) {
+ErrCode
+bindSocket(const SocketIPv4* socket_s)
+{
   // int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
   // binds a socket created with socket() to an address/port pair.
-  if (bind(socket_s->fd, (struct sockaddr *)&socket_s->addr,
+  if (bind(socket_s->fd,
+           (struct sockaddr*)&socket_s->addr,
            socket_s->addr_len) < 0) {
     return ERR_BIND_SOCK;
   }
   return ERR_SUCCESS;
 }
-ErrCode listenSocket(const SocketIPv4 *socket_s, size_t queue_size) {
+ErrCode
+listenSocket(const SocketIPv4* socket_s, size_t queue_size)
+{
   // int listen(int sockfd, int backlog);
   /*listen() marks the socket referred to by sockfd as a passive socket,
        that is, as a socket that will be used to accept incoming connection
@@ -70,7 +77,9 @@ ErrCode listenSocket(const SocketIPv4 *socket_s, size_t queue_size) {
   }
   return ERR_SUCCESS;
 }
-ErrCode acceptConnection(const SocketIPv4 *listen_s, SocketIPv4 *connection_s) {
+ErrCode
+acceptConnection(const SocketIPv4* listen_s, SocketIPv4* connection_s)
+{
   memset(connection_s, 0, sizeof(SocketIPv4));
   connection_s->addr_len = sizeof(connection_s->addr);
 
@@ -80,16 +89,20 @@ ErrCode acceptConnection(const SocketIPv4 *listen_s, SocketIPv4 *connection_s) {
        request on the queue of pending connections for the listening socket,
        sockfd, creates a new connected socket, and returns a new file
        descriptor referring to that socket.*/
-  connection_s->fd =
-      accept(listen_s->fd, (struct sockaddr *)&connection_s->addr,
-             &connection_s->addr_len);
+  connection_s->fd = accept(listen_s->fd,
+                            (struct sockaddr*)&connection_s->addr,
+                            &connection_s->addr_len);
   if (connection_s->fd < 0) {
     return ERR_ACPT_CON;
   }
   return ERR_SUCCESS;
 }
-ErrCode initListenSocket(uint32_t addr, uint16_t port, size_t queue_size,
-                         SocketIPv4 *socket) {
+ErrCode
+initListenSocket(uint32_t    addr,
+                 uint16_t    port,
+                 size_t      queue_size,
+                 SocketIPv4* socket)
+{
   if (createSocket(addr, port, socket) != ERR_SUCCESS)
     return ERR_CREATE_SOCK;
   if (bindSocket(socket) != ERR_SUCCESS)
@@ -100,7 +113,9 @@ ErrCode initListenSocket(uint32_t addr, uint16_t port, size_t queue_size,
   return ERR_SUCCESS;
 }
 
-void closeSocket(SocketIPv4 *s) {
+void
+closeSocket(SocketIPv4* s)
+{
   if (s && s->fd >= 0) {
     close(s->fd);
     s->fd = -1;

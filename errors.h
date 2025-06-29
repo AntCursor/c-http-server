@@ -13,4 +13,4 @@ typedef enum {
   ERR_ACPT_CON,
 } ErrCode;
 
-#endif  // !ERROR_CODES_ENUM_ANT_CHTTPSERVER_H
+#endif // !ERROR_CODES_ENUM_ANT_CHTTPSERVER_H
