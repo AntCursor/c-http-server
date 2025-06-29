@@ -4,8 +4,12 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "errors.h"
+
+#define MIN_SIZE_ADDR 7
+#define MAX_SIZE_PORT 5
 
 void addrPortToStr(uint32_t addr, uint16_t port, char buff[],
                    size_t buff_size) {
@@ -53,4 +57,24 @@ ErrCode strToAddr(const char buff[], uint32_t *addr) {
   *addr = addrN;
 
   return EXIT_SUCCESS;
+}
+ErrCode getAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
+  size_t argumentLenght = strlen(buff);
+  bool error = false;
+  bool pair = false;
+
+  for (uint8_t i = MIN_SIZE_ADDR; i < argumentLenght; ++i) {
+    if (buff[i] == ':') {
+      pair = true;
+      break;
+    }
+  }
+
+  if (pair)
+    error = strToAddrPort(buff, addr, port);
+  else if (argumentLenght > MAX_SIZE_PORT)
+    error = strToAddr(buff, addr);
+  else
+    *port = atoi(buff);
+  return error ? EXIT_FAILURE : EXIT_SUCCESS;
 }

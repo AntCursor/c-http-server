@@ -15,8 +15,6 @@
 #define DEFAULT_PORT (uint16_t)8080
 #define MSG_BUFFER_SIZE 256
 
-#define MIN_SIZE_ADDR 7
-#define MAX_SIZE_PORT 5
 #define MAX_SIZE_ADDRPORT                                                      \
   22 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
 
@@ -25,25 +23,7 @@ int main(int argc, char **argv) {
   uint16_t port = DEFAULT_PORT;
 
   if (argc == 2) {
-    size_t argumentLenght = strlen(argv[1]);
-    bool error = false;
-    bool pair = false;
-
-    for (uint8_t i = MIN_SIZE_ADDR; i < argumentLenght; ++i) {
-      if (argv[1][i] == ':') {
-        pair = true;
-        break;
-      }
-    }
-
-    if (pair)
-      error = strToAddrPort(argv[1], &addr, &port);
-    else if (argumentLenght > MAX_SIZE_PORT)
-      error = strToAddr(argv[1], &addr);
-    else
-      port = atoi(argv[1]);
-
-    if (error) {
+    if (getAddrPort(argv[1], &addr, &port) == EXIT_FAILURE) {
       fprintf(stderr, "Warning: invalid address/port, using default values.\n");
       addr = LOCAL_HOST;
       port = DEFAULT_PORT;
