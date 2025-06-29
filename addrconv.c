@@ -11,9 +11,11 @@
 #define IPV4_OCTET_COUNT 4
 #define IPV4_ADDR_PARTS 5 // 4 octets + port
 #define MIN_IPV4_ADDR_LEN 7
-#define MAX_PORT_STR_LEN 5
+#define MAX_IPV4_ADDR_LEN 15
+#define MAX_PORT_LEN 5
 #define MAX_IPV4_ADDRPORT_STR_LEN                                              \
-  22 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
+  MAX_IPV4_ADDR_LEN + MAX_PORT_LEN + 1 +                                       \
+      1 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
 
 void addrPortToStr(uint32_t addr, uint16_t port, char buff[],
                    size_t buff_size) {
@@ -70,7 +72,8 @@ ErrCode getAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
   ErrCode error = ERR_SUCCESS;
   bool pair = false;
 
-  for (uint8_t i = MIN_IPV4_ADDR_LEN; i < argumentLenght; ++i) {
+  for (uint8_t i = MIN_IPV4_ADDR_LEN;
+       i < argumentLenght && i < MAX_IPV4_ADDR_LEN + 1; ++i) {
     if (buff[i] == ':') {
       pair = true;
       break;
@@ -79,7 +82,7 @@ ErrCode getAddrPort(const char buff[], uint32_t *addr, uint16_t *port) {
 
   if (pair)
     error = strToAddrPort(buff, addr, port);
-  else if (argumentLenght > MAX_PORT_STR_LEN)
+  else if (argumentLenght > MAX_PORT_LEN)
     error = strToAddr(buff, addr);
   else
     *port = atoi(buff);
