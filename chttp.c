@@ -6,14 +6,9 @@
 #include <unistd.h>
 
 #include "addrconv.h"
+#include "config.h"
 #include "connection.h"
 #include "vector.h"
-
-#define LOCAL_HOST 0x7f000001 // 127.0.0.1
-// #define LOCAL_HOST 0xc0a80108 // 192.168.1.8
-#define BACKLOG         20 // size of connection queue
-#define DEFAULT_PORT    (uint16_t)8080
-#define MSG_BUFFER_SIZE 256
 
 int exit_code = EXIT_SUCCESS;
 #define CHECK_ERROR(condition, msg, cleanup_label, var, code)                  \
@@ -26,13 +21,13 @@ int exit_code = EXIT_SUCCESS;
 int
 main(int argc, char** argv)
 {
-  uint32_t addr = LOCAL_HOST;
+  uint32_t addr = DEFAULT_LOCAL_HOST;
   uint16_t port = DEFAULT_PORT;
 
   if (argc == 2) {
     if (getAddrPort(argv[1], &addr, &port)) {
       fprintf(stderr, "Warning: invalid address/port, using default values.\n");
-      addr = LOCAL_HOST;
+      addr = DEFAULT_LOCAL_HOST;
       port = DEFAULT_PORT;
     }
   }
@@ -55,14 +50,14 @@ main(int argc, char** argv)
               exit_code,
               EXIT_FAILURE);
 
-  message = vector_init(MSG_BUFFER_SIZE);
+  message = vector_init(DEFAULT_MSG_BUFFER_SIZE);
   CHECK_ERROR(!message,
               "Error allocating memory for message buffer.",
               cleanup_and_exit,
               exit_code,
               EXIT_FAILURE);
 
-  CHECK_ERROR(initListenSocket(addr, port, BACKLOG, listen_socket),
+  CHECK_ERROR(initListenSocket(addr, port, DEFAULT_BACKLOG, listen_socket),
               "Error initializing listen socket.",
               cleanup_and_exit,
               exit_code,
@@ -81,11 +76,11 @@ main(int argc, char** argv)
     stdout, connection->addr.sin_addr.s_addr, connection->addr.sin_port);
   putchar('\n');
 
-  char   msgBuffer[MSG_BUFFER_SIZE];
+  char   msgBuffer[DEFAULT_MSG_BUFFER_SIZE];
   size_t bytesRead;
 
   do {
-    bytesRead = read(connection->fd, msgBuffer, MSG_BUFFER_SIZE);
+    bytesRead = read(connection->fd, msgBuffer, DEFAULT_MSG_BUFFER_SIZE);
     if (bytesRead > 0) {
       CHECK_ERROR(vector_vpush(msgBuffer, bytesRead, message),
                   "Error expanding vector.",
@@ -93,7 +88,7 @@ main(int argc, char** argv)
                   exit_code,
                   EXIT_FAILURE);
     }
-  } while (bytesRead == MSG_BUFFER_SIZE);
+  } while (bytesRead == DEFAULT_MSG_BUFFER_SIZE);
 
   CHECK_ERROR(vector_push('\0', message),
               "Error adding null terminator to message.",
