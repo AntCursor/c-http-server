@@ -8,15 +8,10 @@
 #include "addrconv.h"
 #include "config.h"
 #include "connection.h"
+#include "errors.h"
 #include "vector.h"
 
 int exit_code = EXIT_SUCCESS;
-#define CHECK_ERROR(condition, msg, cleanup_label, var, code)                  \
-  if (condition) {                                                             \
-    fprintf(stderr, "Error: %s\n", msg);                                       \
-    var = code;                                                                \
-    goto cleanup_label;                                                        \
-  }
 
 int
 main(int argc, char** argv)
