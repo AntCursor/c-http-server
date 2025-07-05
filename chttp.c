@@ -11,7 +11,7 @@
 #include "errors.h"
 #include "vector.h"
 
-int exit_code = EXIT_SUCCESS;
+ErrCode exit_code = ERR_SUCCESS;
 
 int
 main(int argc, char** argv)
@@ -36,27 +36,27 @@ main(int argc, char** argv)
               "Error allocating memory for listen socket.",
               cleanup_and_exit,
               exit_code,
-              EXIT_FAILURE);
+              ERR_FAILURE);
 
   connection = malloc(sizeof(SocketIPv4));
   CHECK_ERROR(!connection,
               "Error allocating memory for connection socket.",
               cleanup_and_exit,
               exit_code,
-              EXIT_FAILURE);
+              ERR_FAILURE);
 
   message = vector_init(DEFAULT_MSG_BUFFER_SIZE);
   CHECK_ERROR(!message,
               "Error allocating memory for message buffer.",
               cleanup_and_exit,
               exit_code,
-              EXIT_FAILURE);
+              ERR_FAILURE);
 
   CHECK_ERROR(initListenSocket(addr, port, DEFAULT_BACKLOG, listen_socket),
               "Error initializing listen socket.",
               cleanup_and_exit,
               exit_code,
-              EXIT_FAILURE);
+              ERR_FAILURE);
 
   printf("Listening for connections.\n");
 
@@ -64,7 +64,7 @@ main(int argc, char** argv)
               "Error accepting connection.",
               cleanup_and_exit,
               exit_code,
-              EXIT_FAILURE);
+              ERR_FAILURE);
 
   printf("Accepted connection from: ");
   fprintAddrPort(
@@ -81,7 +81,7 @@ main(int argc, char** argv)
                   "Error expanding vector.",
                   cleanup_and_exit,
                   exit_code,
-                  EXIT_FAILURE);
+                  ERR_FAILURE);
     }
   } while (bytesRead == DEFAULT_MSG_BUFFER_SIZE);
 
@@ -89,7 +89,7 @@ main(int argc, char** argv)
               "Error adding null terminator to message.",
               cleanup_and_exit,
               exit_code,
-              EXIT_FAILURE);
+              ERR_FAILURE);
 
   printf("%s", message->data);
 
