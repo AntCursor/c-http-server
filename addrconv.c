@@ -20,9 +20,6 @@
 void
 addrPortToStr(uint32_t addr, uint16_t port, char buff[], size_t buff_size)
 {
-  addr = ntohl(addr);
-  port = ntohs(port);
-
   snprintf(buff,
            buff_size,
            "%d.%d.%d.%d:%d",
@@ -38,6 +35,7 @@ strToAddrPort(const char buff[], uint32_t* addr, uint16_t* port)
 {
   uint8_t  address[IPV4_OCTET_COUNT];
   uint32_t addrN = 0;
+  uint16_t portN = 0;
 
   uint8_t nValues = sscanf(buff,
                            "%hhu.%hhu.%hhu.%hhu:%hu",
@@ -45,7 +43,7 @@ strToAddrPort(const char buff[], uint32_t* addr, uint16_t* port)
                            address + 1,
                            address + 2,
                            address + 3,
-                           port);
+                           &portN);
   if (nValues != IPV4_ADDR_PARTS)
     return ERR_INVALID_ARGS;
 
@@ -55,6 +53,7 @@ strToAddrPort(const char buff[], uint32_t* addr, uint16_t* port)
   addrN |= address[3];
 
   *addr = addrN;
+  *port = portN;
 
   return ERR_SUCCESS;
 }
@@ -114,7 +113,9 @@ getAddrPort(const char buff[], uint32_t* addr, uint16_t* port)
 void
 fprintAddrPort(FILE* fp, uint32_t addr, uint16_t port)
 {
+  // Assumes values are in network byte order
   char addrPortString[MAX_IPV4_ADDRPORT_STR_LEN];
-  addrPortToStr(addr, port, addrPortString, MAX_IPV4_ADDRPORT_STR_LEN);
+  addrPortToStr(
+    ntohl(addr), ntohs(port), addrPortString, MAX_IPV4_ADDRPORT_STR_LEN);
   fprintf(fp, "%s", addrPortString);
 }
