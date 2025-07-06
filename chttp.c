@@ -27,23 +27,7 @@ main(int argc, char** argv)
     }
   }
 
-  SocketIPv4* listen_socket = NULL;
-  SocketIPv4* connection    = NULL;
-  CharVec*    message       = NULL;
-
-  listen_socket = malloc(sizeof(SocketIPv4));
-  CHECK_ERROR(!listen_socket,
-              "Error allocating memory for listen socket.",
-              cleanup_and_exit,
-              exit_code,
-              ERR_FAILURE);
-
-  connection = malloc(sizeof(SocketIPv4));
-  CHECK_ERROR(!connection,
-              "Error allocating memory for connection socket.",
-              cleanup_and_exit,
-              exit_code,
-              ERR_FAILURE);
+  CharVec* message = NULL;
 
   message = vector_init(DEFAULT_MSG_BUFFER_SIZE);
   CHECK_ERROR(!message,
@@ -52,7 +36,8 @@ main(int argc, char** argv)
               exit_code,
               ERR_FAILURE);
 
-  CHECK_ERROR(initListenSocket(addr, port, DEFAULT_BACKLOG, listen_socket),
+  SocketIPv4 listen_socket;
+  CHECK_ERROR(initListenSocket(addr, port, DEFAULT_BACKLOG, &listen_socket),
               "Error initializing listen socket.",
               cleanup_and_exit,
               exit_code,
@@ -60,7 +45,8 @@ main(int argc, char** argv)
 
   printf("Listening for connections.\n");
 
-  CHECK_ERROR(acceptConnection(listen_socket, connection),
+  SocketIPv4 connection;
+  CHECK_ERROR(acceptConnection(&listen_socket, &connection),
               "Error accepting connection.",
               cleanup_and_exit,
               exit_code,
@@ -68,14 +54,14 @@ main(int argc, char** argv)
 
   printf("Accepted connection from: ");
   fprintAddrPort(
-    stdout, connection->addr.sin_addr.s_addr, connection->addr.sin_port);
+    stdout, connection.addr.sin_addr.s_addr, connection.addr.sin_port);
   putchar('\n');
 
   char   msgBuffer[DEFAULT_MSG_BUFFER_SIZE];
   size_t bytesRead;
 
   do {
-    bytesRead = read(connection->fd, msgBuffer, DEFAULT_MSG_BUFFER_SIZE);
+    bytesRead = read(connection.fd, msgBuffer, DEFAULT_MSG_BUFFER_SIZE);
     if (bytesRead > 0) {
       CHECK_ERROR(vector_vpush(msgBuffer, bytesRead, message),
                   "Error expanding vector.",
@@ -94,11 +80,9 @@ main(int argc, char** argv)
   printf("%s", message->data);
 
 cleanup_and_exit:
-  closeSocket(connection);
-  free(connection);
+  closeSocket(&connection);
 
-  closeSocket(listen_socket);
-  free(listen_socket);
+  closeSocket(&listen_socket);
 
   vector_free(message);
 
