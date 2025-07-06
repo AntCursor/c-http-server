@@ -17,6 +17,16 @@
   MAX_IPV4_ADDR_LEN + MAX_PORT_LEN + 1 +                                       \
     1 // Ex: "192.168.150.255:65535\0" -> 22 characters long.
 
+ErrCode
+strToPort(const char buff[], uint16_t* port)
+{
+  char*   strtol_error = NULL;
+  int32_t Eport        = strtol(buff, &strtol_error, 10);
+  if (strtol_error == buff || Eport < 0 || Eport >= (1 << sizeof(uint16_t) * 8))
+    return ERR_INVALID_ARGS;
+  *port = Eport;
+  return ERR_SUCCESS;
+}
 void
 addrPortToStr(uint32_t addr, uint16_t port, char buff[], size_t buff_size)
 {
@@ -106,7 +116,7 @@ getAddrPort(const char buff[], uint32_t* addr, uint16_t* port)
   else if (argumentLenght > MAX_PORT_LEN)
     error = strToAddr(buff, addr);
   else
-    *port = atoi(buff);
+    error = strToPort(buff, port);
   return error;
 }
 
