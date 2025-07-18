@@ -35,10 +35,12 @@ vector_free(CharVec* v)
 VecErr
 vector_resize(size_t new_capacity, CharVec* v)
 {
-  v->data = (char*)realloc(v->data, new_capacity);
-  if (!v->data) {
+  char* new_place = (char*)realloc(v->data, new_capacity);
+  if (!new_place) {
     return EMEMORY_ALLOC;
   }
+
+  v->data     = new_place;
   v->capacity = new_capacity;
   return ESUCCESS;
 }
