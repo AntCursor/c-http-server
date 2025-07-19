@@ -5,6 +5,6 @@
 // #define DEFAULT_LOCAL_HOST 0xc0a80108 // 192.168.1.8
 #define DEFAULT_BACKLOG 20 // size of connection queue
 #define DEFAULT_PORT (uint16_t)8080
-#define DEFAULT_MSG_BUFFER_SIZE 256
+#define MAX_REQUEST_SIZE 4096
 
 #endif // !CONFIG_CHTTP_SERVER_ANT_H

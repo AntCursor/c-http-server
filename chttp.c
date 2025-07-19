@@ -1,11 +1,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 
 #include "addrconv.h"
+#include "con_handler.h"
 #include "config.h"
 #include "connection.h"
 #include "errors.h"
@@ -57,25 +55,11 @@ main(int argc, char** argv)
     stdout, connection.addr.sin_addr.s_addr, connection.addr.sin_port);
   putchar('\n');
 
-  char   msgBuffer[DEFAULT_MSG_BUFFER_SIZE];
-  size_t bytesRead;
-
-  do {
-    bytesRead = read(connection.fd, msgBuffer, DEFAULT_MSG_BUFFER_SIZE);
-    if (bytesRead > 0) {
-      CHECK_ERROR(vector_vpush(msgBuffer, bytesRead, message),
-                  "Error expanding vector.",
-                  cleanup_and_exit,
-                  exit_code,
-                  ERR_FAILURE);
-    }
-  } while (bytesRead == DEFAULT_MSG_BUFFER_SIZE);
-
-  CHECK_ERROR(vector_push('\0', message),
-              "Error adding null terminator to message.",
+  CHECK_ERROR(receive_bytes(connection.fd, MAX_REQUEST_SIZE, message),
+              "Error receiving message.",
               cleanup_and_exit,
               exit_code,
-              ERR_FAILURE);
+              ERR_FAILURE)
 
   printf("%s", message->data);
 
