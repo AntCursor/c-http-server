@@ -15,7 +15,7 @@ typedef enum {
 } VecErr;
 
 CharVec *vector_init(size_t initial_capacity);
-void vector_free(CharVec *v);
+void vector_free(CharVec **v);
 
 VecErr vector_resize(size_t new_capacity, CharVec *v);
 

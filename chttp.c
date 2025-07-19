@@ -26,8 +26,7 @@ main(int argc, char** argv)
   }
 
   CharVec* message = NULL;
-
-  message = vector_init(DEFAULT_MSG_BUFFER_SIZE);
+  message          = vector_init(DEFAULT_MSG_BUFFER_SIZE);
   CHECK_ERROR(!message,
               "Error allocating memory for message buffer.",
               cleanup_and_exit,
@@ -68,7 +67,7 @@ cleanup_and_exit:
 
   closeSocket(&listen_socket);
 
-  vector_free(message);
+  vector_free(&message);
 
   return exit_code;
 }
