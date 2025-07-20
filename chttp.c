@@ -7,7 +7,6 @@
 #include "config.h"
 #include "connection.h"
 #include "errors.h"
-#include "vector.h"
 
 ErrCode exit_code = ERR_SUCCESS;
 
@@ -25,14 +24,6 @@ main(int argc, char** argv)
     }
   }
 
-  CharVec* message = NULL;
-  message          = vector_init(DEFAULT_MSG_BUFFER_SIZE);
-  CHECK_ERROR(!message,
-              "Error allocating memory for message buffer.",
-              cleanup_and_exit,
-              exit_code,
-              ERR_FAILURE);
-
   SocketIPv4 listen_socket;
   CHECK_ERROR(initListenSocket(addr, port, DEFAULT_BACKLOG, &listen_socket),
               "Error initializing listen socket.",
@@ -42,32 +33,38 @@ main(int argc, char** argv)
 
   printf("Listening for connections.\n");
 
-  SocketIPv4 connection;
-  CHECK_ERROR(acceptConnection(&listen_socket, &connection),
+  ConHandler* con_handle = NULL;
+  con_handle             = initConHandler();
+  CHECK_ERROR(!con_handle,
+              "Error allocating memory for message buffer.",
+              cleanup_and_exit,
+              exit_code,
+              ERR_FAILURE);
+
+  CHECK_ERROR(acceptConnection(&listen_socket, &con_handle->socket),
               "Error accepting connection.",
               cleanup_and_exit,
               exit_code,
               ERR_FAILURE);
 
   printf("Accepted connection from: ");
-  fprintAddrPort(
-    stdout, connection.addr.sin_addr.s_addr, connection.addr.sin_port);
+  fprintAddrPort(stdout,
+                 con_handle->socket.addr.sin_addr.s_addr,
+                 con_handle->socket.addr.sin_port);
   putchar('\n');
 
-  CHECK_ERROR(receive_bytes(connection.fd, MAX_REQUEST_SIZE, message),
+  CHECK_ERROR(receive_bytes(MAX_REQUEST_SIZE, con_handle),
               "Error receiving message.",
               cleanup_and_exit,
               exit_code,
               ERR_FAILURE)
 
-  printf("%s", message->data);
+  printf("%s", con_handle->last_data->data);
 
 cleanup_and_exit:
-  closeSocket(&connection);
-
   closeSocket(&listen_socket);
 
-  vector_free(&message);
+  freeConHandler(&con_handle);
 
   return exit_code;
 }
