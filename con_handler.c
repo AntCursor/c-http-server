@@ -50,6 +50,10 @@ initConHandler()
     return NULL;
 
   handler->last_data = vector_init(DEFAULT_MSG_BUFFER_SIZE);
+  if (!handler->last_data) {
+    free(handler);
+    return NULL;
+  }
 
   return handler;
 }
