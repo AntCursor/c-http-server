@@ -48,10 +48,7 @@ main(int argc, char** argv)
               ERR_FAILURE);
 
   printf("Accepted connection from: ");
-  fprintAddrPort(stdout,
-                 con_handle->socket.addr.sin_addr.s_addr,
-                 con_handle->socket.addr.sin_port);
-  putchar('\n');
+  printAddrPortln(&con_handle->socket);
 
   CHECK_ERROR(receive_bytes(MAX_REQUEST_SIZE, con_handle),
               "Error receiving message.",
