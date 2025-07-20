@@ -45,10 +45,9 @@ receive_bytes(size_t max_bytes, ConHandler* handle)
 ConHandler*
 initConHandler()
 {
-  ConHandler* handler = (ConHandler*)malloc(sizeof(ConHandler));
+  ConHandler* handler = (ConHandler*)calloc(1, sizeof(ConHandler));
   if (!handler)
     return NULL;
-  memset(handler, 0, sizeof(ConHandler));
 
   handler->last_data = vector_init(DEFAULT_MSG_BUFFER_SIZE);
 
