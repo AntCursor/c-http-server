@@ -1,9 +1,15 @@
 #ifndef ERROR_CODES_ENUM_ANT_CHTTPSERVER_H
 #define ERROR_CODES_ENUM_ANT_CHTTPSERVER_H
 
+#define LOG_ERROR(msg, ...)                                                    \
+  fprintf(stderr, "[ERROR] %s:%d: " msg "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+#define LOG_WARNING(msg, ...)                                                  \
+  fprintf(stderr, "[WARNING] %s:%d: " msg "\n", __FILE__, __LINE__,            \
+          ##__VA_ARGS__)
+
 #define CHECK_ERROR(condition, msg, cleanup_label, var, code)                  \
   if (condition) {                                                             \
-    fprintf(stderr, "Error: %s\n", msg);                                       \
+    LOG_ERROR(msg);                                                            \
     var = code;                                                                \
     goto cleanup_label;                                                        \
   }
