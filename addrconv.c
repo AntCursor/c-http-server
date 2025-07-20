@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "connection.h"
 #include "errors.h"
 
 #define IPV4_OCTET_COUNT  4
@@ -129,4 +130,11 @@ fprintAddrPort(FILE* fp, uint32_t addr, uint16_t port)
   addrPortToStr(
     ntohl(addr), ntohs(port), addrPortString, MAX_IPV4_ADDRPORT_STR_LEN);
   fprintf(fp, "%s", addrPortString);
+}
+
+void
+printAddrPortln(SocketIPv4* socket)
+{
+  fprintAddrPort(stdout, socket->addr.sin_addr.s_addr, socket->addr.sin_port);
+  putchar('\n');
 }
