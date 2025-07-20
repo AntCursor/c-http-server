@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 ErrCode
-receive_bytes(int fd, size_t max_bytes, CharVec* byte_vec)
+receive_bytes(size_t max_bytes, ConHandler* handle)
 {
   char   msgBuffer[DEFAULT_MSG_BUFFER_SIZE];
   size_t bytesRead      = 0;
@@ -18,24 +18,25 @@ receive_bytes(int fd, size_t max_bytes, CharVec* byte_vec)
   --max_bytes;
 
   do {
-    bytesRead = read(fd, msgBuffer, DEFAULT_MSG_BUFFER_SIZE);
+    bytesRead = read(handle->socket.fd, msgBuffer, DEFAULT_MSG_BUFFER_SIZE);
 
     if (bytesRead == 0)
       continue;
 
     if (bytesRead + totalBytesRead < max_bytes) {
-      if (vector_vpush(msgBuffer, bytesRead, byte_vec))
+      if (vector_vpush(msgBuffer, bytesRead, handle->last_data))
         return ERR_MEMORY_ALLOC;
 
     } else {
-      if (vector_vpush(msgBuffer, max_bytes - totalBytesRead, byte_vec))
+      if (vector_vpush(
+            msgBuffer, max_bytes - totalBytesRead, handle->last_data))
         return ERR_MEMORY_ALLOC;
     }
 
     totalBytesRead += bytesRead;
   } while (bytesRead == DEFAULT_MSG_BUFFER_SIZE);
 
-  if (vector_push('\0', byte_vec))
+  if (vector_push('\0', handle->last_data))
     return ERR_MEMORY_ALLOC;
 
   return ERR_SUCCESS;

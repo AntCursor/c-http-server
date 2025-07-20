@@ -16,6 +16,6 @@ typedef struct {
 ConHandler *initConHandler();
 void freeConHandler(ConHandler **handle);
 
-ErrCode receive_bytes(int fd, size_t max_bytes, CharVec *byte_vec);
+ErrCode receive_bytes(size_t max_bytes, ConHandler *handle);
 
 #endif // !MESSAGE_CHTTP_SERVER_ANT_H
