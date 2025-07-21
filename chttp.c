@@ -48,7 +48,7 @@ main(int argc, char** argv)
               ERR_FAILURE);
 
   printf("Accepted connection from: ");
-  printAddrPortln(&con_handle->socket);
+  printAddrPortln(stdout, &con_handle->socket);
 
   CHECK_ERROR(receive_bytes(MAX_REQUEST_SIZE, con_handle),
               "Error receiving message.",

@@ -133,8 +133,8 @@ fprintAddrPort(FILE* fp, uint32_t addr, uint16_t port)
 }
 
 void
-printAddrPortln(SocketIPv4* socket)
+printAddrPortln(FILE* fp, SocketIPv4* socket)
 {
-  fprintAddrPort(stdout, socket->addr.sin_addr.s_addr, socket->addr.sin_port);
+  fprintAddrPort(fp, socket->addr.sin_addr.s_addr, socket->addr.sin_port);
   putchar('\n');
 }

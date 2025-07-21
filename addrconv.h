@@ -9,6 +9,6 @@
 ErrCode getAddrPort(const char buff[], uint32_t *addr, uint16_t *port);
 
 void fprintAddrPort(FILE *fp, uint32_t addr, uint16_t port);
-void printAddrPortln(SocketIPv4 *socket);
+void printAddrPortln(FILE *fp, SocketIPv4 *socket);
 
 #endif // !ADDRCONV_CHTTPSERVER_ANT_H
