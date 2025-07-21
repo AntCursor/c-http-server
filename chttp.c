@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
 
 #include "addrconv.h"
 #include "con_handler.h"
@@ -31,7 +30,7 @@ main(int argc, char** argv)
               exit_code,
               ERR_FAILURE);
 
-  printf("Listening for connections.\n");
+  LOG_INFO("listening for connections.");
 
   ConHandler* con_handle = NULL;
   con_handle             = initConHandler();
@@ -47,8 +46,8 @@ main(int argc, char** argv)
               exit_code,
               ERR_FAILURE);
 
-  printf("Accepted connection from: ");
-  printAddrPortln(stdout, &con_handle->socket);
+  LOG_INFO("accepted connection from: ");
+  printAddrPortln(stderr, &con_handle->socket);
 
   CHECK_ERROR(receive_bytes(MAX_REQUEST_SIZE, con_handle),
               "Error receiving message.",
@@ -56,7 +55,7 @@ main(int argc, char** argv)
               exit_code,
               ERR_FAILURE)
 
-  printf("%s", con_handle->last_data->data);
+  LOG_INFO("\n%s", con_handle->last_data->data);
 
 cleanup_and_exit:
   closeSocket(&listen_socket);
