@@ -26,6 +26,14 @@ createSocket(uint32_t addr, uint16_t port, SocketIPv4* socket_s)
     return ERR_CREATE_SOCK;
   }
 
+  // Set SO_REUSEADDR to avoid "Address already in use" errors
+  uint32_t optval = 1;
+  if (setsockopt(
+        socket_s->fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0) {
+    close(socket_s->fd);
+    return ERR_CREATE_SOCK;
+  }
+
   /*
   struct sockaddr_in {
 
