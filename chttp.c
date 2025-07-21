@@ -18,7 +18,7 @@ main(int argc, char** argv)
 
   if (argc == 2) {
     if (getAddrPort(argv[1], &addr, &port)) {
-      fprintf(stderr, "Warning: invalid address/port, using default values.\n");
+      LOG_WARNING("Invalid addr/port pair, using default values.");
       addr = DEFAULT_LOCAL_HOST;
       port = DEFAULT_PORT;
     }
